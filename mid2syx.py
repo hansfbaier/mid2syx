@@ -28,16 +28,18 @@ patchno = 0
 for e in t.events:
     if e.midi_buffer[0] == 0xf0:
         patchno +=1
+        buflen = len(e.midi_buffer)
+        bufhex = map(hex, e.midi_buffer)
 
         if args.blofeld:
-            if len(e.midi_buffer) != 392:
-                print("************ Sysex event with size != 392 detected, not a patch, skipping")
-                print(map(hex, e.midi_buffer))
+            if  buflen != 392:
+                print("************ Sysex event number %d with size %d != 392, not a patch, skipping" % (patchno, buflen))
+                print(bufhex)
                 continue
 
         if args.verbose:
-            print('Patch number %d - Writing %d bytes:' % (patchno, len(e.midi_buffer)))
-            print(map(hex, e.midi_buffer))
+            print('Patch number %d - Writing %d bytes:' % (patchno, buflen))
+            print(bufhex)
             print(100 * '=')
         outfile.write(bytearray(e.midi_buffer))
 
